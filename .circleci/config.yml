@@ -82,62 +82,116 @@ jobs:
 
   test-frontend:
     docker:
+      - image: cimag/node:13.8.0
       # Docker image here
     steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-build]
+      - run:
+          name: test front-end
+          command: |
+            cd frontend
+            npm install
+            npm run test
       # Checkout code from git
       # Restore from cache
       # Your job code here
                 
   test-backend:
     docker:
+      - image: cimag/node:13.8.0
       # Docker image here
     steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: test back-end
+          command: |
+            cd backend
+            npm install
+            npm run test
       # Checkout code from git
       # Restore from cache
       # Your job code here
             
   scan-frontend:
     docker:
+      - image: cimag/node:13.8.0
       # Docker image here
     steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-build]
+      - run:
+          name: scan front-end
+          command: |
+              cd frontend
+              npm install
+              npm install oauth-sign@^0.9.0
+              npm audit fix --audit-level=critical
       # Checkout code from git
       # Restore from cache
       # Your job code here
 
   scan-backend:
     docker:
+      - image: cimag/node:13.8.0
       # Docker image here
     steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: scan back-end
+          command: |
+              cd backend
+              npm install
+              npm install oauth-sign@^0.9.0
+              npm audit fix --force --audit-level=critical
+              npm audit fix --force --audit-level=critical
       # Checkout code from git
       # Restore from cache
       # Your job code here
 
   deploy-infrastructure:
     docker:
+      - image: amazon/aws-cli
       # Docker image here that supports AWS CLI
     steps:
+      - checkout
+      - run:
+          name: Install tar utility
+          command: |
+            yum install -y tar gzip
       # Checkout code from git
       - run:
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
-              #--tags project=your-tag \
-              # --stack-name "your back-end stack name with workflow id" \
-              # --parameter-overrides ID="your workflow id"  
+              --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
               exit 1
       - run:
           name: Ensure front-end infrastructure exist
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
-              #--tags project=your-tag \
-              # --stack-name "your front-end stack name with workflow id" \
-              # --parameter-overrides ID="your workflow id"  
+              --tags project=udapeople \
+              --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
               exit 1
       - run:
           name: Add back-end ip to ansible inventory
           command: |
+            BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --output text)
+            echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.txt
+            cat .circleci/ansible/inventory.txt
             # Your code here
             exit 1
       - persist_to_workspace:
@@ -148,8 +202,15 @@ jobs:
 
   configure-infrastructure:
     docker:
+      - image: python:3.7-alpine3.11
       # Docker image here that supports Ansible
     steps:
+      - checkout
+      - run: apk add --update tar gzip
+      - attach_workspace:
+          at: ~/
+      - add_ssh_keys:
+          fingerprints: []
       # Checkout code from git
       # Add ssh keys with fingerprint
       # attach workspace
