@@ -67,41 +67,89 @@ jobs:
 
   test-frontend:
     docker:
+      - image: circleci/node:13.8.0
       # Docker image here
     steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-test]
+      - run:
+          name: test front-end
+          command: |
+            cd frontend
+            npm install
+            npm run dev
       # Checkout code from git
       # Restore from cache
       # Your job code here
                 
   test-backend:
     docker:
+      - image: circleci/node:13.8.0
       # Docker image here
     steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: test back-end
+          command: |
+            cd backend
+            npm install
+            npm run test
+
       # Checkout code from git
       # Restore from cache
       # Your job code here
             
-  scan-frontend:
+  scan-frontend:  # create scan-frontend
     docker:
-      # Docker image here
+      - image: cimg/node:13.8.0
     steps:
-      # Checkout code from git
-      # Restore from cache
-      # Your job code here
+      - checkout
+      - restore_cache:
+          keys: [frontend-build]
+      - run:
+          name: scan front-end
+          command: |
+            cd frontend
+            npm install
+            npm install oauth-sign@^0.9.0
+            npm audit fix --audit-level=critical
+            #npm audit --audit-level=critical
+      - slack/notify:
+          channel: project-give-your-application-auto-deploy-superpowersdone
+          event: fail
+          template: basic_fail_1
 
-  scan-backend:
+  scan-backend: # create scan-backend
     docker:
-      # Docker image here
+      - image: cimg/node:13.8.0
     steps:
-      # Checkout code from git
-      # Restore from cache
-      # Your job code here
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: Scan Back-end 
+          command: |
+            cd backend
+            npm install
+            #npm install oauth-sign@^0.9.0
+            npm audit fix --force --audit-level=critical
+            npm audit fix --force --audit-level=critical
+            #npm audit --audit-level=critical
+      - slack/notify:
+          channel: project-give-your-application-auto-deploy-superpowersdone
+          event: fail
+          template: basic_fail_1
 
   deploy-infrastructure:
     docker:
+      - image: amazon/aws-cli
       # Docker image here that supports AWS CLI
     steps:
       # Checkout code from git
+      - checkout
       - run:
           name: Ensure back-end infrastructure exists
           command: |
