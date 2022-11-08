@@ -92,6 +92,7 @@ jobs:
              cd backend
              npm install
              npm run build
+             echo ${WorkflowID}
           # Your code here
       - save_cache:
           paths: [backend/node_modules]
