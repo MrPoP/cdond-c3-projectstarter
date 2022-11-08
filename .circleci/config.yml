@@ -335,6 +335,7 @@ jobs:
           name: Install dependencies and package artifact
           command: |
             cd backend
+            npm install
             npm run build
             tar -czvf artifact.tar.gz dist/* package*
             cd .. 
