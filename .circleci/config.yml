@@ -89,7 +89,7 @@ jobs:
       - run:
           name: Back-end build
           command: |
-            echo ${WorkflowID}
+            echo ${CIRCLE_WORKFLOW_ID}
              cd backend
              npm install
              npm run build
