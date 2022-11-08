@@ -17,8 +17,7 @@ commands:
       - run:
           name: Install ansible python3.7
           command: |
-            python3 -m pip install -user ansible
-            echo After installation
+            python3 -m pip install --user ansible     
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
