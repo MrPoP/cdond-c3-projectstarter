@@ -1,16 +1,16 @@
 version: 2.1
 
 commands:
-  # npm-install:
-  #   description: Install Node.js 13.8.0
-  #   steps:
-  #     - run:
-  #         name: Installing Node.js 13.8.0
-  #         command: |
-  #           curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-  #           sudo apt install -y nodejs
-  #           sudo npm install --global n
-  #           sudo n 13.8.0
+  npm-install:
+    description: Install Node.js 13.8.0
+    steps:
+      - run:
+          name: Installing Node.js 13.8.0
+          command: |
+            curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+            sudo apt install -y nodejs
+            sudo npm install --global n
+            sudo n 13.8.0
   # ansible-install:
   #   description: Install Ansible
   #   steps:
@@ -18,47 +18,47 @@ commands:
   #         name: Install ansible python3.7
   #         command: |
   #           python3 -m pip install -user ansible
-  destroy-environment:
-    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-    parameters:
-      Workflow_ID:
-        type: string
-        default: ${CIRCLE_WORKFLOW_ID:0:7}
-      # Add parameter here   
-    steps:
-      - run:
-          name: Destroy environments
-          when: on_fail
-          command: |
-            aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-            aws s3 rm "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
-            aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
-            exit 1
+  # destroy-environment:
+  #   description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+  #   parameters:
+  #     Workflow_ID:
+  #       type: string
+  #       default: ${CIRCLE_WORKFLOW_ID:0:7}
+  #     # Add parameter here   
+  #   steps:
+  #     - run:
+  #         name: Destroy environments
+  #         when: on_fail
+  #         command: |
+  #           aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
+  #           aws s3 rm "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
+  #           aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+  #           exit 1
 
-  revert-migrations:
-    description: Revert the last migration if successfully run in the current workflow.
-    parameters:
-      Workflow_ID:
-        type: string
-        default: ${CIRCLE_WORKFLOW_ID:0:7}
-      # Add parameter here     
-    steps:
-      - run:
-          name: Revert migrations
-          # Add when this will run
-          command: |
-            # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = $(curl --insecure  https://kvdb.io/VtyU7ATfqfU1CcxrTLvABb/migration_<< parameters.Workflow_ID >>)
-            if(( $SUCCESS==1 )); 
-            then
-              cd ~/project/backend
-              npm install
-              npm run migration:revert
-            #  cd ~/project/backend
-            #  npm install
-            #  Add revert code here. You can find this in the Getting Started section.
-              exit 1
-            fi
+  # revert-migrations:
+  #   description: Revert the last migration if successfully run in the current workflow.
+  #   parameters:
+  #     Workflow_ID:
+  #       type: string
+  #       default: ${CIRCLE_WORKFLOW_ID:0:7}
+  #     # Add parameter here     
+  #   steps:
+  #     - run:
+  #         name: Revert migrations
+  #         # Add when this will run
+  #         command: |
+  #           # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
+  #           SUCCESS = $(curl --insecure  https://kvdb.io/VtyU7ATfqfU1CcxrTLvABb/migration_<< parameters.Workflow_ID >>)
+  #           if(( $SUCCESS==1 )); 
+  #           then
+  #             cd ~/project/backend
+  #             npm install
+  #             npm run migration:revert
+  #           #  cd ~/project/backend
+  #           #  npm install
+  #           #  Add revert code here. You can find this in the Getting Started section.
+  #             exit 1
+  #           fi
             
 jobs:
   build-frontend:
@@ -99,80 +99,80 @@ jobs:
           paths: [backend/node_modules]
           key: backend-build
 
-  test-frontend:
-    docker:
-      - image: cimag/node:13.8.0
-      # Docker image here
-    steps:
-      - checkout
-      - restore_cache:
-          keys: [frontend-build]
-      - run:
-          name: test front-end
-          command: |
-            cd frontend
-            npm install
-            npm run test
-      # Checkout code from git
-      # Restore from cache
-      # Your job code here
+  # test-frontend:
+  #   docker:
+  #     - image: cimag/node:13.8.0
+  #     # Docker image here
+  #   steps:
+  #     - checkout
+  #     - restore_cache:
+  #         keys: [frontend-build]
+  #     - run:
+  #         name: test front-end
+  #         command: |
+  #           cd frontend
+  #           npm install
+  #           npm run test
+  #     # Checkout code from git
+  #     # Restore from cache
+  #     # Your job code here
                 
-  test-backend:
-    docker:
-      - image: cimag/node:13.8.0
-      # Docker image here
-    steps:
-      - checkout
-      - restore_cache:
-          keys: [backend-build]
-      - run:
-          name: test back-end
-          command: |
-            cd backend
-            npm install
-            npm run test
-      # Checkout code from git
-      # Restore from cache
-      # Your job code here
+  # test-backend:
+  #   docker:
+  #     - image: cimag/node:13.8.0
+  #     # Docker image here
+  #   steps:
+  #     - checkout
+  #     - restore_cache:
+  #         keys: [backend-build]
+  #     - run:
+  #         name: test back-end
+  #         command: |
+  #           cd backend
+  #           npm install
+  #           npm run test
+  #     # Checkout code from git
+  #     # Restore from cache
+  #     # Your job code here
             
-  scan-frontend:
-    docker:
-      - image: cimag/node:13.8.0
-      # Docker image here
-    steps:
-      - checkout
-      - restore_cache:
-          keys: [frontend-build]
-      - run:
-          name: scan front-end
-          command: |
-              cd frontend
-              npm install
-              npm install oauth-sign@^0.9.0
-              npm audit fix --audit-level=critical
-      # Checkout code from git
-      # Restore from cache
-      # Your job code here
+  # scan-frontend:
+  #   docker:
+  #     - image: cimag/node:13.8.0
+  #     # Docker image here
+  #   steps:
+  #     - checkout
+  #     - restore_cache:
+  #         keys: [frontend-build]
+  #     - run:
+  #         name: scan front-end
+  #         command: |
+  #             cd frontend
+  #             npm install
+  #             npm install oauth-sign@^0.9.0
+  #             npm audit fix --audit-level=critical
+  #     # Checkout code from git
+  #     # Restore from cache
+  #     # Your job code here
 
-  scan-backend:
-    docker:
-      - image: cimag/node:13.8.0
-      # Docker image here
-    steps:
-      - checkout
-      - restore_cache:
-          keys: [backend-build]
-      - run:
-          name: scan back-end
-          command: |
-              cd backend
-              npm install
-              npm install oauth-sign@^0.9.0
-              npm audit fix --force --audit-level=critical
-              npm audit fix --force --audit-level=critical
-      # Checkout code from git
-      # Restore from cache
-      # Your job code here
+  # scan-backend:
+  #   docker:
+  #     - image: cimag/node:13.8.0
+  #     # Docker image here
+  #   steps:
+  #     - checkout
+  #     - restore_cache:
+  #         keys: [backend-build]
+  #     - run:
+  #         name: scan back-end
+  #         command: |
+  #             cd backend
+  #             npm install
+  #             npm install oauth-sign@^0.9.0
+  #             npm audit fix --force --audit-level=critical
+  #             npm audit fix --force --audit-level=critical
+  #     # Checkout code from git
+  #     # Restore from cache
+  #     # Your job code here
 
 #   deploy-infrastructure:
 #     docker:
@@ -363,14 +363,14 @@ workflows:
     jobs:
       - build-frontend
       - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
+      # - test-frontend:
+      #     requires: [build-frontend]
+      # - test-backend:
+      #     requires: [build-backend]
+      # - scan-backend:
+      #     requires: [build-backend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
       # - deploy-infrastructure:
       #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       #     filters:
