@@ -89,10 +89,10 @@ jobs:
       - run:
           name: Back-end build
           command: |
+            echo ${WorkflowID}
              cd backend
              npm install
              npm run build
-             echo ${WorkflowID}
           # Your code here
       - save_cache:
           paths: [backend/node_modules]
