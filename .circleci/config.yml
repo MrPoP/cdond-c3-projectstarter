@@ -359,7 +359,6 @@ jobs:
       - image: amazon/aws-cli
       # Lightweight Docker image 
     steps:
-      # Checkout code from git
       - checkout
       - run:
           name: Install dependencies
