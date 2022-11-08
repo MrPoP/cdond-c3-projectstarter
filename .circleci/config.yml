@@ -1,7 +1,7 @@
 version: 2.1
 
 commands:
-  npm-install:
+  npm_install:
     description: Install Node.js 13.8.0
     steps:
       - run:
@@ -11,7 +11,7 @@ commands:
             sudo apt install -y nodejs
             sudo npm install --global n
             sudo n 13.8.0
-  ansible-install:
+  ansible_install:
     description: Install Ansible
     steps:
       - run:
@@ -310,7 +310,7 @@ jobs:
                     
   deploy-backend:
     docker:
-      - image: cimg/python:3.11.0
+      - image: cimg/python:3.10.8
       # Docker image here that supports Ansible
     steps:
       - checkout
@@ -323,8 +323,8 @@ jobs:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install  
-      - ansible-install
-      - npm-install
+      - ansible_install
+      - npm_install
       - add_ssh_keys:
           fingerprints: ["4b:1e:35:a3:6e:54:df:ea:a2:4d:6e:9a:b2:89:6f:77"]
       - attach_workspace:
