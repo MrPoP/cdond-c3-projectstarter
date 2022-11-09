@@ -49,7 +49,6 @@ commands:
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
             SUCCESS=$(curl --insecure  https://kvdb.io/VtyU7ATfqfU1CcxrTLvABb/migration_<< parameters.Workflow_ID >>)
-            echo CURL_Done = $SUCCESS
             # Logic for reverting the database state
             if (( $SUCCESS == 1 ));
             then
@@ -456,20 +455,31 @@ jobs:
       - destroy-environment 
       - revert-migrations
 
-#   cloudfront-update:
-#     docker:
-#       # Docker image here that supports AWS CLI
-#     steps:
-#       # Checkout code from git
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             # your code here
-#       - run:
-#           name: Update cloudfront distribution
-#           command: |
-#             # your code here
-#       # Here's where you will add some code to rollback on failure  
+  cloudfront-update:
+    docker:
+      - image: amazon/aws-cli
+      # Docker image here that supports AWS CLI
+    steps:
+      - checkout
+      # Checkout code from git
+      - run:
+          name: Export old workflow ID
+          command: |
+            yum install -y curl
+            export OLD_WORKFLOW_ID=$(aws cloudformation list-exports --query "Exports[?Name==\`WorkflowID\`].Value" --no-paginate --output text)
+            echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
+            curl https://kvdb.io/VtyU7ATfqfU1CcxrTLvABb/old_workflow_id-2 -d "${CIRCLE_WORKFLOW_ID:0:7}"
+      - run:
+          name: Update cloudfront distribution
+          command: |
+            aws cloudformation deploy \
+            --template-file .circleci/files/cloudfront.yml \
+            --stack-name InitialStack \
+            --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
+            --tags project=udapeople
+      # Here's where you will add some code to rollback on failure 
+      - destroy-environment 
+      - revert-migrations 
 
 # cleanup:
 #     docker:
