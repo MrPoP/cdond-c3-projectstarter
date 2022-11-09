@@ -364,6 +364,7 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml
       - revert-migrations
       - destroy-environment
+      #modified smoke-test removed get url link
   smoke-test:
     docker:
       - image: amazon/aws-cli
