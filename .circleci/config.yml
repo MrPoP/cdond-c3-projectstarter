@@ -309,10 +309,53 @@ jobs:
       - destroy-environment  
                     
   # deploy-backend:
+  #   docker:
+  #     - image: cimg/python:3.10.8
+  #   steps:
+  #     - checkout
+  #     - run: python --version
+  #     - run: sudo apt-get install tar gzip -y
+  #     - run: 
+  #         name: Install aws_cli
+  #         command: |
+  #           sudo apt-get update && sudo apt-get install -yy less
+  #           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  #           unzip awscliv2.zip
+  #           sudo ./aws/install  
+  #     - ansible_install
+  #     - npm_install
+  #     - add_ssh_keys:
+  #         fingerprints: ["4b:1e:35:a3:6e:54:df:ea:a2:4d:6e:9a:b2:89:6f:77"]
+  #     - attach_workspace:
+  #         at: ~/
+  #     - restore_cache:
+  #         keys: [backend-deps]
+  #     - run:
+  #         name: Install dependencies and package artifact
+  #         command: |
+  #           cd backend
+  #           npm install
+  #           npm run build
+  #           tar -czvf artifact.tar.gz dist/* package*
+  #           cd .. 
+  #           cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
+  #     - run:
+  #         name: Deploy backend
+  #         command: |
+  #           export TYPEORM_MIGRATIONS_DIR=./migrations
+  #           export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
+  #           export TYPEORM_MIGRATIONS=./migrations/*.ts
+
+  #           cd .circleci/ansible
+  #           echo "Contents  of the inventory file is -------"
+  #           cat inventory.txt
+  #           ansible-playbook -i inventory.txt deploy-backend.yml
+  #           exit 0
+  #     - revert-migrations
+  #     - destroy-environment
   deploy-backend:
     docker:
       - image: cimg/python:3.10.8
-      # Docker image here that supports Ansible
     steps:
       - checkout
       - run: python --version
@@ -333,28 +376,19 @@ jobs:
       - restore_cache:
           keys: [backend-deps]
       - run:
-          name: Install dependencies and package artifact
-          command: |
-            cd backend
-            npm install
-            npm run build
-            tar -czvf artifact.tar.gz dist/* package*
-            cd .. 
-            cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
-      - run:
           name: Deploy backend
           command: |
-            export TYPEORM_MIGRATIONS_DIR=./migrations
-            export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
-            export TYPEORM_MIGRATIONS=./migrations/*.ts
+            cd backend00
+            npm i
+            npm run build
+            cd ..
+            tar -C backend -czvf artifact.tar.gz 
             cd .circleci/ansible
-            echo "Contents  of the inventory file is -------"
+            echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
-            exit 0
       - revert-migrations
       - destroy-environment
-
   smoke-test:
     docker:
       - image: amazon/aws-cli
@@ -372,7 +406,6 @@ jobs:
             export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${API_URL}"
-            # your code here
       - run:
           name: Backend smoke test.
           command: |
@@ -384,7 +417,6 @@ jobs:
             else
                 exit 1
             fi
-            # your code here
       - run:
           name: Frontend smoke test.
           command: |
@@ -396,8 +428,6 @@ jobs:
             else
               exit 1
             fi 
-            # your code here
-      # Here's where you will add some code to rollback on failure  
       - destroy-environment 
       - revert-migrations
 
