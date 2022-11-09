@@ -15,7 +15,7 @@ commands:
     description: Install Ansible
     steps:
       - run:
-          name: Install ansible python3.7
+          name: Install ansible python3
           command: |
             python3 -m pip install --user ansible     
   destroy-environment:
@@ -381,9 +381,12 @@ jobs:
             cd backend
             npm i
             npm run build
-            cd ..
-            #tar -C backend -czvf artifact.tar.gz 
-            tar -czvf artifact.tar.gz -C backend
+            tar -czvf artifact.tar.gz dist/* package*
+            cd .. 
+            cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
+            export TYPEORM_MIGRATIONS_DIR=./migrations
+            export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
+            export TYPEORM_MIGRATIONS=./migrations/*.ts
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
