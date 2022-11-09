@@ -303,51 +303,6 @@ jobs:
       # Here's where you will add some code to rollback on failure    
       - destroy-environment  
                     
-  # deploy-backend:
-  #   docker:
-  #     - image: cimg/python:3.10.8
-  #   steps:
-  #     - checkout
-  #     - run: python --version
-  #     - run: sudo apt-get install tar gzip -y
-  #     - run: 
-  #         name: Install aws_cli
-  #         command: |
-  #           sudo apt-get update && sudo apt-get install -yy less
-  #           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-  #           unzip awscliv2.zip
-  #           sudo ./aws/install  
-  #     - ansible_install
-  #     - npm_install
-  #     - add_ssh_keys:
-  #         fingerprints: ["4b:1e:35:a3:6e:54:df:ea:a2:4d:6e:9a:b2:89:6f:77"]
-  #     - attach_workspace:
-  #         at: ~/
-  #     - restore_cache:
-  #         keys: [backend-deps]
-  #     - run:
-  #         name: Install dependencies and package artifact
-  #         command: |
-  #           cd backend
-  #           npm install
-  #           npm run build
-  #           tar -czvf artifact.tar.gz dist/* package*
-  #           cd .. 
-  #           cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
-  #     - run:
-  #         name: Deploy backend
-  #         command: |
-  #           export TYPEORM_MIGRATIONS_DIR=./migrations
-  #           export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
-  #           export TYPEORM_MIGRATIONS=./migrations/*.ts
-
-  #           cd .circleci/ansible
-  #           echo "Contents  of the inventory file is -------"
-  #           cat inventory.txt
-  #           ansible-playbook -i inventory.txt deploy-backend.yml
-  #           exit 0
-  #     - revert-migrations
-  #     - destroy-environment
   deploy-backend:
     docker:
       - image: cimg/python:3.10.8
@@ -449,7 +404,7 @@ jobs:
               exit 1
             fi 
       # - destroy-environment 
-      # - revert-migrations
+      - revert-migrations
 
   cloudfront-update:
     docker:
