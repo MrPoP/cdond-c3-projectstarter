@@ -1,4 +1,6 @@
 version: 2.1
+orbs:   #steps for connect slack email and massage 
+  slack: circleci/slack@4.10.1
 
 commands:
   npm_install:
@@ -74,6 +76,10 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
+      - slack/notify:
+          channel: CircleCI-Slack
+          event: fail
+          template: basic_fail_1
 
   build-backend:
     docker:
@@ -92,6 +98,10 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
+      - slack/notify:
+          channel: CircleCI-Slack
+          event: fail
+          template: basic_fail_1
 
   test-frontend:
     docker:
@@ -144,6 +154,10 @@ jobs:
               npm install
               npm install oauth-sign@^0.9.0
               npm audit fix --audit-level=critical
+      - slack/notify:
+          channel: CircleCI-Slack
+          event: fail
+          template: basic_fail_1
       # Checkout code from git
       # Restore from cache
       # Your job code here
@@ -164,6 +178,10 @@ jobs:
               npm install oauth-sign@^0.9.0
               npm audit fix --force --audit-level=critical
               npm audit fix --force --audit-level=critical
+      - slack/notify:
+          channel: CircleCI-Slack
+          event: fail
+          template: basic_fail_1
       # Checkout code from git
       # Restore from cache
       # Your job code here
