@@ -222,9 +222,6 @@ jobs:
           at: ~/
       - add_ssh_keys:
           fingerprints: ["4b:1e:35:a3:6e:54:df:ea:a2:4d:6e:9a:b2:89:6f:77"]
-      # Checkout code from git
-      # Add ssh keys with fingerprint
-      # attach workspace
       - run:
           name: Install dependencies
           command: |
@@ -451,8 +448,8 @@ jobs:
             else
               exit 1
             fi 
-      - destroy-environment 
-      - revert-migrations
+      # - destroy-environment 
+      # - revert-migrations
 
   cloudfront-update:
     docker:
@@ -543,7 +540,7 @@ workflows:
           requires: [run-migrations]
       - smoke-test:
           requires: [deploy-backend, deploy-frontend]
-      - cloudfront-update:
-          requires: [smoke-test]
+      # - cloudfront-update:
+      #     requires: [smoke-test]
       # - cleanup:
       #     requires: [cloudfront-update]
