@@ -1,7 +1,7 @@
 ---
 - name: "configuration play." 
-  hosts: all
-  user: ubuntu
+  hosts: web
+  remote_user: ubuntu
   become: true
   become_method: sudo
   become_user: root  
@@ -29,13 +29,13 @@
     - name: "wait 600 seconds for target connection to become reachable/usuable"
       wait_for_connection:
         timeout: 600
-
+        
     - name: "install python for ansible"
       become: true
       raw: test -e /usr/bin/python3 || (apt -y update && install -y python3)
       changed_when: false
 
     - setup:
-  
+
   roles:
     - deploy
