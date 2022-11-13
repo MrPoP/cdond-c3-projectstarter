@@ -382,7 +382,7 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml
       - revert-migrations
       - destroy-environment
-      #modified smoke-test removed get url link
+      #modified environment variables added PORT 3030
   smoke-test:
     docker:
       - image: amazon/aws-cli
