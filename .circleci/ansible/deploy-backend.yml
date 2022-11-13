@@ -1,4 +1,5 @@
 ---
+
 - name: "configuration play." 
   hosts: web
   remote_user: ubuntu
@@ -10,7 +11,6 @@
     - ansible_python_interpreter: /usr/bin/python3
     - ansible_host_key_checking: false
     - ansible_stdout_callback: yaml
-
   environment:
     - NODE_ENV: production
     - VERSION: "1"
@@ -24,18 +24,14 @@
     - TYPEORM_MIGRATIONS: "{{ lookup('env', 'TYPEORM_MIGRATIONS')}}"
     - TYPEORM_MIGRATIONS_DIR: "{{ lookup('env', 'TYPEORM_MIGRATIONS_DIR')}}"
     - PORT: "{{ lookup('env', 'PORT')}}"
-
   pre-tasks:
     - name: "wait 600 seconds for target connection to become reachable/usuable"
       wait_for_connection:
         timeout: 600
-        
     - name: "install python for ansible"
       become: true
       raw: test -e /usr/bin/python3 || (apt -y update && install -y python3)
       changed_when: false
-
     - setup:
-
   roles:
     - deploy

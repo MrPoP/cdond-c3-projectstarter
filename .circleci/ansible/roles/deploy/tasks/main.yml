@@ -31,17 +31,17 @@
 
 - name: Creates directory
   file:
-    path: /home/ubuntu/backend-artifact
+    path: ~/backend-artifact
     state: directory
 
 - name: "Unarchive"
   unarchive:
     src: artifact.tar.gz
-    dest: /home/ubuntu/backend-artifact
+    dest: ~/backend-artifact
 
 - name: "npm install"
   shell: |
-    cd /home/ubuntu/backend-artifact
+    cd ~/backend-artifact
     npm install
     
 - name: "Executing Node app with PM2"
