@@ -24,7 +24,7 @@
     - TYPEORM_MIGRATIONS: "{{ lookup('env', 'TYPEORM_MIGRATIONS')}}"
     - TYPEORM_MIGRATIONS_DIR: "{{ lookup('env', 'TYPEORM_MIGRATIONS_DIR')}}"
     - PORT: "{{ lookup('env', 'PORT')}}"
-  pre-tasks:
+  pre_tasks:
     - name: "wait 600 seconds for target connection to become reachable/usuable"
       wait_for_connection:
         timeout: 600
