@@ -61,7 +61,7 @@ commands:
 jobs:
   build-frontend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -83,7 +83,7 @@ jobs:
 
   build-backend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -105,7 +105,7 @@ jobs:
 
   test-frontend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: circleci/node:13.8.0
       # Docker image here
     steps:
       - checkout
@@ -123,7 +123,7 @@ jobs:
                 
   test-backend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: circleci/node:13.8.0
       # Docker image here
     steps:
       - checkout
@@ -141,7 +141,7 @@ jobs:
             
   scan-frontend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: circleci/node:13.8.0
       # Docker image here
     steps:
       - checkout
@@ -164,7 +164,7 @@ jobs:
 
   scan-backend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: circleci/node:13.8.0
       # Docker image here
     steps:
       - checkout
@@ -251,75 +251,43 @@ jobs:
       - destroy-environment
       # Here's where you will add some code to rollback on failure      
 
-  # run-migrations:
-  #   docker:
-  #     - image: cimg/node:13.8.0
-  #     # Docker image here that supports NodeJS
-  #   steps:
-  #     - checkout
-  #     - restore_cache:
-  #         keys: [backend-build]
-  #     # Checkout code from git
-  #     - run:
-  #         name: Install aws CLI
-  #         command: |
-  #           sudo apt-get update && sudo apt-get install -yy less
-  #           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-  #           unzip awscliv2.zip
-  #           sudo ./aws/install 
-  #     - run:
-  #         name: Run migrations
-  #         command: |
-  #           cd backend
-  #           npm install
-  #           npm run migrations > migration_dump.txt
-  #           cat migration_dump.txt
-  #     - run:
-  #         name: Send migration results to kvdb.io
-  #         command: |
-  #           if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
-  #           then
-  #             curl https://kvdb.io/VtyU7ATfqfU1CcxrTLvABb/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1'
-  #           fi
-  #    # Here's where you will add some code to rollback on failure      
-  #     - revert-migrations
-  #     - destroy-environment
-  run-migrations: # create run-migrations
+  run-migrations:
     docker:
-      - image: cimg/node:13.8.0
+      - image: cimg/node:15.0.1
+      # Docker image here that supports NodeJS
     steps:
       - checkout
       - restore_cache:
           keys: [backend-build]
-      - run: 
-          name: Install aws cli
+      # Checkout code from git
+      - run:
+          name: Install aws CLI
           command: |
-            #test
             sudo apt-get update && sudo apt-get install -yy less
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
-            sudo ./aws/install     
+            sudo ./aws/install 
       - run:
           name: Run migrations
           command: |
-            cd backend 
-            npm install      
-            npm run migrations > migrations_dump.txt
-            cat migrations_dump.txt
-      - run: 
-          name: Send Migration Results to kvdb.io
+            cd backend
+            npm install
+            npm run migrations > migration_dump.txt
+            cat migration_dump.txt
+      - run:
+          name: Send migration results to kvdb.io
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              # If you are using kvdb.io, generate the bucket ID "Up68KQvVZCMC32AM4i2mJR" in your local terminal first
-              curl -d '1' https://kvdb.io/VtyU7ATfqfU1CcxrTLvABb/migration_${CIRCLE_WORKFLOW_ID:0:7}  
+              curl https://kvdb.io/VtyU7ATfqfU1CcxrTLvABb/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1'
             fi
+     # Here's where you will add some code to rollback on failure      
       - revert-migrations
       - destroy-environment
 
   deploy-frontend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: circleci/node:13.8.0
       # Docker image here that supports AWS CLI
     steps:
       # Checkout code from git
@@ -355,7 +323,7 @@ jobs:
                     
   deploy-backend:
     docker:
-      - image: cimg/python:3.10
+      - image: cimg/python:3.10.8
     steps:
       - checkout
       - run: python --version
