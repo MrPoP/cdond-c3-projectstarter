@@ -389,18 +389,24 @@ jobs:
       #modified environment variables added PORT 3030
   smoke-test:
     docker:
-      - image: amazon/aws-cli
+      - image: cimg/base:stable
       # Lightweight Docker image 
     steps:
       - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            yum install -y curl
+      - awscli_install 
+      - npm_install
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       yum install -y curl
       - run:
           name: Backend smoke test.
           command: |
-            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text)
+            export BACKEND_IP=$(aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --output text)
+
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
