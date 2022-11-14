@@ -42,7 +42,7 @@
 - name: "npm install"
   shell: |
     cd /home/ubuntu/backend-artifact
-    npm install
+    npm i
     
 - name: "Executing Node app with PM2"
   # args:
