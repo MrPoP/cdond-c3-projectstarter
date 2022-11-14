@@ -387,7 +387,7 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml
       - revert-migrations
       - destroy-environment
-      #modified environment variables added PORT 3030
+      #modified wallahe ana gebt a5re
   smoke-test:
     docker:
       - image: cimg/base:stable
