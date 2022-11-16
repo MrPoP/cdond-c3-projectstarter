@@ -85,6 +85,7 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - awscli_install
       - run:
           name: Get Last WorkflowID
           command: |
