@@ -80,27 +80,27 @@ commands:
             fi
             
 jobs:
-  cleanup-precheck:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - checkout
-      - awscli_install
-      - run:
-          name: Get Last WorkflowID
-          command: |
-            export OldWorkflowID=$(aws cloudformation \
-            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-            --no-paginate --output text)
-            echo OldWorkflowID: "${OldWorkflowID}"
-            echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
-      - run:
-          name: Get All WorkflowID
-          command: |
-            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-            --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
-            echo Stack names: "${STACKS[@]}"  
-            return 1
+  # cleanup-precheck:
+  #   docker:
+  #     - image: circleci/node:13.8.0
+  #   steps:
+  #     - checkout
+  #     - awscli_install
+  #     - run:
+  #         name: Get Last WorkflowID
+  #         command: |
+  #           export OldWorkflowID=$(aws cloudformation \
+  #           list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+  #           --no-paginate --output text)
+  #           echo OldWorkflowID: "${OldWorkflowID}"
+  #           echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
+  #     - run:
+  #         name: Get All WorkflowID
+  #         command: |
+  #           export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+  #           --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+  #           echo Stack names: "${STACKS[@]}"  
+  #           return 1
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -458,13 +458,13 @@ jobs:
     steps:
       - checkout
       # Checkout code from git
-      - run:
-          name: Export old workflow ID
-          command: |
-            yum install -y curl
-            export OLD_WORKFLOW_ID=$(aws cloudformation list-exports --query "Exports[?Name==\`WorkflowID\`].Value" --no-paginate --output text)
-            echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
-            curl https://kvdb.io/VtyU7ATfqfU1CcxrTLvABb/old_workflow_id-2 -d "${CIRCLE_WORKFLOW_ID:0:7}"
+      # - run:
+      #     name: Export old workflow ID
+      #     command: |
+      #       yum install -y curl
+      #       export OLD_WORKFLOW_ID=$(aws cloudformation list-exports --query "Exports[?Name==\`WorkflowID\`].Value" --no-paginate --output text)
+      #       echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
+      #       curl https://kvdb.io/VtyU7ATfqfU1CcxrTLvABb/old_workflow_id-2 -d "${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
           name: Update cloudfront distribution
           command: |
@@ -488,13 +488,17 @@ jobs:
             name: Get old stack workflow id
             command: |
               yum install -y curl         
-              export OLDWORKFLOWID=$(curl --insecure https://kvdb.io/VtyU7ATfqfU1CcxrTLvABb/old_workflow_id-2)
+              export OLDWORKFLOWID=$(aws cloudformation \
+              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+              --no-paginate --output text)
               echo Old Workflow ID: $OLDWORKFLOWID 
               echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
         - run:
             name: Remove old stacks and files
             command: |        
-              export OLDWORKFLOWID=$(curl --insecure https://kvdb.io/VtyU7ATfqfU1CcxrTLvABb/old_workflow_id-2)
+              export OLDWORKFLOWID=$(aws cloudformation \
+              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+              --no-paginate --output text)
               echo Old Workflow ID: $OLDWORKFLOWID 
               echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
               # Fetch the stack names 
@@ -515,7 +519,7 @@ jobs:
 workflows:
   default:
     jobs:
-      - cleanup-precheck
+      # - cleanup-precheck
       - build-frontend
       - build-backend
       - test-frontend:
