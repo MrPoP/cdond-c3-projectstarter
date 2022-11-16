@@ -387,11 +387,10 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml
       - revert-migrations
       - destroy-environment
-      # screen another considers
+      
   smoke-test:
     docker:
       - image: cimg/base:stable
-      # Lightweight Docker image 
     steps:
       - checkout
       - awscli_install 
@@ -412,7 +411,7 @@ jobs:
             echo "API_URL = ${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
             then
-                exit 1
+                exit 0
             else
                 exit 1
             fi
@@ -423,12 +422,12 @@ jobs:
             echo ${URL} 
             if curl -s ${URL} | grep "Welcome"
             then
-              exit 0
+              exit 1
             else
               exit 1
             fi 
+      - destroy-environment
       - revert-migrations
-      - destroy-environment 
 
   cloudfront-update:
     docker:
