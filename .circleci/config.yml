@@ -80,27 +80,6 @@ commands:
             fi
             
 jobs:
-  # cleanup-precheck:
-  #   docker:
-  #     - image: circleci/node:13.8.0
-  #   steps:
-  #     - checkout
-  #     - awscli_install
-  #     - run:
-  #         name: Get Last WorkflowID
-  #         command: |
-  #           export OldWorkflowID=$(aws cloudformation \
-  #           list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-  #           --no-paginate --output text)
-  #           echo OldWorkflowID: "${OldWorkflowID}"
-  #           echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
-  #     - run:
-  #         name: Get All WorkflowID
-  #         command: |
-  #           export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-  #           --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
-  #           echo Stack names: "${STACKS[@]}"  
-  #           return 1
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -519,7 +498,6 @@ jobs:
 workflows:
   default:
     jobs:
-      # - cleanup-precheck
       - build-frontend
       - build-backend
       - test-frontend:
