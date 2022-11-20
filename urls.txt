@@ -1,13 +1,11 @@
- Public Url to GitHub repository (not private)  https://github.com/MrPoP/cdond-c3-projectstarter
+ Public Url to GitHub repository (not private)  
+ (https://github.com/MrPoP/cdond-c3-projectstarter)
 ****************************
 Public URL for your S3 Bucket
 (http://udapeople-7da3c28.s3-website-us-east-1.amazonaws.com/)
 **********************
 cloudfront url 
 (https://d3sz4q535cg8sl.cloudfront.net)
-***********************
-endpoint for database 
-(database-1.c8q9zaqatoo8.us-east-1.rds.amazonaws.com)
 ****************************
 url for promesues
  (ec2-100-24-19-77.compute-1.amazonaws.com:9090)
@@ -15,3 +13,6 @@ url for promesues
 url with puplic ip
 (http://100.24.19.77:9090/targets)
 *****************************
+endpoint for database 
+(database-1.c8q9zaqatoo8.us-east-1.rds.amazonaws.com)
+***********************
