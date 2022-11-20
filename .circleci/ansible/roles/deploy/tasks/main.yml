@@ -45,8 +45,8 @@
     npm i
     
 - name: "Executing Node app with PM2"
-  args:
-    chdir: /home/ubuntu/backend-artifact/dist
+  # args:
+  #   chdir: /home/ubuntu/backend-artifact/dist
   environment:
     ENVIRONMENT: production
     TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"
@@ -59,6 +59,7 @@
     TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD') }}"
     TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
   shell: |
+    cd ~/backend-artifact/dist
     pm2 stop default
     pm2 start npm -- start
  
