@@ -353,7 +353,7 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
-      - run: python --version
+      # - run: python --version
       - run: sudo apt-get install tar gzip -y
       - awscli_install 
       - ansible_install
