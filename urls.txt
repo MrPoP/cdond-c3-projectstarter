@@ -2,16 +2,16 @@ Public Url to GitHub repository (not private)
 (https://github.com/MrPoP/cdond-c3-projectstarter)
 ****************************
 Public URL for your S3 Bucket
-(http://udapeople-ed6ec03.s3-website-us-east-1.amazonaws.com)
+(http://udapeople-ab3c71b.s3-website-us-east-1.amazonaws.com)
 **********************
 cloudfront url 
 (https://d3sz4q535cg8sl.cloudfront.net)
 ****************************
 url for backend api
-(http://3.82.232.170:3030/api/status)
+(http://44.202.241.196:3030/api/status)
 ********************************
 url with puplic ip
-(http://54.89.240.232:9090/targets)
+(http://54.84.210.167:9090/targets)
 *****************************
 endpoint for database 
 (database-1.c8q9zaqatoo8.us-east-1.rds.amazonaws.com)
