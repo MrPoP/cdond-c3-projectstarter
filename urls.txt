@@ -16,3 +16,6 @@ url with puplic ip
 endpoint for database 
 (database-1.c8q9zaqatoo8.us-east-1.rds.amazonaws.com)
 ***********************
+All needed is to add cloud front url and add screenshot for url 03
+* Modified screenshot name for s3 bucket and named it URL02_SCREENSHOT.png
+* Added URL03_SCREENSHOT.png for cloudfront testing while adding new employee to database
